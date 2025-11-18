@@ -41,15 +41,27 @@ export default function Hero() {
 
           <div className="flex justify-center perspective">
             <div
-              className="w-80 h-80 bg-gradient-to-br from-primary via-secondary to-accent rounded-3xl flex items-center justify-center text-6xl font-bold text-primary-foreground animate-float hover:animate-shadow-shift transition-all duration-300 cursor-pointer group"
+              className="w-80 h-80 rounded-3xl overflow-hidden relative cursor-pointer group animate-float hover:animate-shadow-shift transition-all duration-300"
               style={{
                 transformStyle: "preserve-3d",
               }}
             >
-              <div className="absolute inset-0 bg-white/5 rounded-3xl group-hover:bg-white/10 transition-all duration-300"></div>
-              <span className="relative z-10 group-hover:scale-110 transition-transform duration-300">Photo</span>
+              {/* Fondo gradiente debajo de la foto (por si quieres un overlay) */}
+              <div className="absolute inset-0 bg-gradient-to-br from-primary via-secondary to-accent"></div>
+
+              {/* FOTO FULL COVER */}
+              <img
+                src="/jose.jpeg"   // ← asegúrate de que esté en /public
+                alt="Mi foto"
+                className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+              />
+
+              {/* Capa brillante suave */}
+              <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-300"></div>
             </div>
           </div>
+
+
         </div>
 
         {/* Information Section */}
