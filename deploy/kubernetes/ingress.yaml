@@ -3,9 +3,6 @@ kind: Ingress
 metadata:
   name: portfolio-ingress
   namespace: proyectoportfolio
-  annotations:
-    kubernetes.io/ingress.class: public
-    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   ingressClassName: nginx #Esto es para que el controlador nginx gestione este Ingress
   rules:
