@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
- name: portfolio
+ name: portfolio-deploy
  namespace: proyectoportfolio
 spec:
  replicas: 1
@@ -14,7 +14,7 @@ spec:
        app: portfolio
    spec:
      containers:
-       - name: portfolio
+       - name: pod-portfolio
          image: jose196/portfolio-jose:latest
          # imagePullPolicy: Never
          ports:
