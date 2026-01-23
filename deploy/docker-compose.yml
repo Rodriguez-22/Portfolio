@@ -1,0 +1,11 @@
+services:
+  webtaller:
+    build:
+      context: ../
+      dockerfile: ./deploy/Dockerfile
+    image: ptaller_apache:latest
+    container_name: ptaller_apache
+    volumes:
+      - ./logs:/root/logs
+    ports:
+      - "8080:80"
