@@ -11,7 +11,7 @@ spec:
  template:
    metadata:
      labels:
-       app: portfolio
+       app: jose-portfolio
    spec:
      containers:
        - name: portfolio

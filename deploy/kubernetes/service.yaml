@@ -6,8 +6,8 @@ metadata:
 spec:
   type: NodePort
   selector:
-    app: portfolio
+    app: jose-portfolio
   ports:
     - port: 80
       targetPort: 80
-      nodePort: 30090
+      nodePort: 3000
