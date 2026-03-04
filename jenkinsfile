@@ -5,6 +5,7 @@ pipeline {
 apiVersion: v1
 kind: Pod
 spec:
+  serviceAccountName: jenkins-admin
   containers:
   - name: kaniko
     image: gcr.io/kaniko-project/executor:debug
@@ -28,11 +29,8 @@ spec:
     }
 
     environment {
-        // Tu repositorio de Docker Hub
         IMAGE = "rodriguez22/portfolio"
-        // El namespace que creamos en tu VPS
         NAMESPACE = "portfolio"
-        // El nombre de tu deployment en K8s
         DEPLOYMENT = "portfolio-deploy" 
     }
 
@@ -43,26 +41,23 @@ spec:
             }
         }
 
-        stage('Construir y Subir Imagen (Docker Hub)') {
+        stage('Construir y Subir Imagen') {
             steps {
                 container('kaniko') {
                     sh """
-                        /kaniko/executor --context ${WORKSPACE} \
-                            --dockerfile deploy/Dockerfile \
-                            --destination ${IMAGE}:${BUILD_NUMBER} \
-                            --destination ${IMAGE}:latest \
-                            --snapshot-mode=redo --single-snapshot
+                    /kaniko/executor --context ${WORKSPACE} \
+                        --dockerfile deploy/Dockerfile \
+                        --destination ${IMAGE}:${BUILD_NUMBER} \
+                        --destination ${IMAGE}:latest
                     """
                 }
             }
         }
 
-        stage('Desplegar en VPS (MicroK8s)') {
+        stage('Desplegar en K8s') {
             steps {
                 container('kubectl') {
-                    // Esto le dice a Kubernetes que descargue la nueva imagen y reinicie la web sin cortes
                     sh "kubectl rollout restart deployment ${DEPLOYMENT} -n ${NAMESPACE}"
-                    //cambios para que funcione
                 }
             }
         }
