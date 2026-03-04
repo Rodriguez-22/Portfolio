@@ -1,0 +1,51 @@
+pipeline {
+    agent {
+        kubernetes {
+            yaml '''
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+  - name: kaniko
+    image: gcr.io/kaniko-project/executor:debug
+    command:
+    - /busybox/cat
+    tty: true
+    volumeMounts:
+      - name: docker-config
+        mountPath: /kaniko/.docker
+  volumes:
+    - name: docker-config
+      secret:
+        secretName: dockerhub-secret
+'''
+        }
+    }
+
+    environment {
+        // Adaptado para el repositorio de rodriguez-22
+        IMAGE = "rodriguez22/portfolio"
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build & Push Image') {
+            steps {
+                container('kaniko') {
+                    sh """
+                        /kaniko/executor --context ${WORKSPACE} \
+                            --dockerfile deploy/Dockerfile \
+                            --destination ${IMAGE}:${BUILD_NUMBER} \
+                            --destination ${IMAGE}:latest \
+                            --snapshot-mode=redo --single-snapshot
+                    """
+                }
+            }
+        }
+    }
+}

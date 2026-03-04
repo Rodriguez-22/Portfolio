@@ -1,26 +1,33 @@
-# Fase de construcción
-FROM node:22-alpine AS builder
+# Etapa 1: Base y dependencias
+FROM node:20-alpine AS base
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
+
+FROM base AS dependencies
 WORKDIR /app
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
 
-# Copiamos archivos de dependencias desde el contexto (raíz)
-COPY package*.json ./
-RUN npm install
-
-# Copiamos todo el código fuente
+# Etapa 2: Construcción (Build)
+FROM base AS build
+WORKDIR /app
 COPY . .
+COPY --from=dependencies /app/node_modules ./node_modules
+RUN pnpm build
 
-# Construimos la app de Next.js
-RUN npm run build
-
-# Fase de ejecución
-FROM node:22-alpine AS runner
+# Etapa 3: Servidor de producción (Next.js)
+FROM base AS production-stage
 WORKDIR /app
-ENV NODE_ENV=production
 
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./package.json
+ENV NODE_ENV production
+
+# Copiamos solo los archivos necesarios para producción
+COPY --from=build /app/public ./public
+COPY --from=build /app/.next/standalone ./
+COPY --from=build /app/.next/static ./.next/static
 
 EXPOSE 3000
-CMD ["npm", "start"]
+
+# Comando para ejecutar el servidor standalone de Next.js
+CMD ["node", "server.js"]
