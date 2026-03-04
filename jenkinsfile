@@ -22,10 +22,10 @@ spec:
     }
 
     environment {
-        IMAGE = "rodriguez22/portfolio"
-        NAMESPACE = "portfolio"
-        DEPLOYMENT = "portfolio-deploy" 
-    }
+    IMAGE = "jose196/portfolio"      // <- ¡AQUÍ ESTÁ LA MAGIA!
+    NAMESPACE = "portfolio"
+    DEPLOYMENT = "portfolio-deploy" 
+}
 
     stages {
         stage('Descargar Código') {
