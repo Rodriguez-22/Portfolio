@@ -14,6 +14,11 @@ spec:
     volumeMounts:
       - name: docker-config
         mountPath: /kaniko/.docker
+  - name: kubectl
+    image: bitnami/kubectl:latest
+    command:
+    - cat
+    tty: true
   volumes:
     - name: docker-config
       secret:
@@ -23,18 +28,22 @@ spec:
     }
 
     environment {
-        // Adaptado para el repositorio de rodriguez-22
+        // Tu repositorio de Docker Hub
         IMAGE = "rodriguez22/portfolio"
+        // El namespace que creamos en tu VPS
+        NAMESPACE = "portfolio"
+        // El nombre de tu deployment en K8s
+        DEPLOYMENT = "portfolio-deploy" 
     }
 
     stages {
-        stage('Checkout') {
+        stage('Descargar Código') {
             steps {
                 checkout scm
             }
         }
 
-        stage('Build & Push Image') {
+        stage('Construir y Subir Imagen (Docker Hub)') {
             steps {
                 container('kaniko') {
                     sh """
@@ -44,6 +53,15 @@ spec:
                             --destination ${IMAGE}:latest \
                             --snapshot-mode=redo --single-snapshot
                     """
+                }
+            }
+        }
+
+        stage('Desplegar en VPS (MicroK8s)') {
+            steps {
+                container('kubectl') {
+                    // Esto le dice a Kubernetes que descargue la nueva imagen y reinicie la web sin cortes
+                    sh "kubectl rollout restart deployment ${DEPLOYMENT} -n ${NAMESPACE}"
                 }
             }
         }
