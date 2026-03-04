@@ -62,6 +62,7 @@ spec:
                 container('kubectl') {
                     // Esto le dice a Kubernetes que descargue la nueva imagen y reinicie la web sin cortes
                     sh "kubectl rollout restart deployment ${DEPLOYMENT} -n ${NAMESPACE}"
+                    //cambios para que funcione
                 }
             }
         }
