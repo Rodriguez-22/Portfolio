@@ -12,20 +12,15 @@ spec:
     command:
     - /busybox/cat
     tty: true
-  - name: kubectl
-    image: bitnami/kubectl:latest
-    command:
-    - cat
-    tty: true
 '''
         }
     }
 
     environment {
-    IMAGE = "jose196/portfolio"      // <- ¡AQUÍ ESTÁ LA MAGIA!
-    NAMESPACE = "portfolio"
-    DEPLOYMENT = "portfolio-deploy" 
-}
+        IMAGE = "jose196/portfolio"
+        NAMESPACE = "portfolio"
+        DEPLOYMENT = "portfolio-deploy" 
+    }
 
     stages {
         stage('Descargar Código') {
@@ -56,9 +51,9 @@ spec:
 
         stage('Desplegar en K8s') {
             steps {
-                container('kubectl') {
-                    sh "kubectl rollout restart deployment ${DEPLOYMENT} -n ${NAMESPACE}"
-                }
+                // Descargamos kubectl rápidamente y ejecutamos el reinicio sin usar otro contenedor
+                sh "curl -LO https://dl.k8s.io/release/v1.30.0/bin/linux/amd64/kubectl && chmod +x kubectl"
+                sh "./kubectl rollout restart deployment ${DEPLOYMENT} -n ${NAMESPACE}"
             }
         }
     }
