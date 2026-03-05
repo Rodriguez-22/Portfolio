@@ -17,7 +17,8 @@ export default function Hero() {
             <h1
               className="text-4xl md:text-6xl font-bold mb-4 text-primary animate-slide-in-up-bounce"
               style={{ animationDelay: "0s" }}
-            >
+            > 
+            {/* UN COMENTARIO */}
               JOSE <span className="text-accent">RODRÍGUEZ</span>
             </h1>
             <p className="text-lg text-accent font-semibold mb-2 animate-fade-in-up" style={{ animationDelay: "0.1s" }}>
